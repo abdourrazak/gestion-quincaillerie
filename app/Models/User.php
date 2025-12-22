@@ -22,6 +22,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'actif',
     ];
 
     /**
@@ -47,6 +49,64 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
+            'actif' => 'boolean',
         ];
     }
+
+    /**
+     * Relation avec les ventes (en tant que vendeur)
+     */
+    public function ventes()
+    {
+        return $this->hasMany(Vente::class, 'user_id');
+    }
+
+    /**
+     * Relation avec les mouvements de stock
+     */
+    public function mouvementsStock()
+    {
+        return $this->hasMany(MouvementStock::class, 'user_id');
+    }
+
+    /**
+     * Relation avec les commandes fournisseurs
+     */
+    public function commandesFournisseurs()
+    {
+        return $this->hasMany(CommandeFournisseur::class, 'user_id');
+    }
+
+    /**
+     * Vérifier si l'utilisateur est admin
+     */
+    public function estAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    /**
+     * Vérifier si l'utilisateur est gérant
+     */
+    public function estGerant(): bool
+    {
+        return $this->role === 'gerant';
+    }
+
+    /**
+     * Vérifier si l'utilisateur est vendeur
+     */
+    public function estVendeur(): bool
+    {
+        return $this->role === 'vendeur';
+    }
+
+    /**
+     * Vérifier si l'utilisateur est magasinier
+     */
+    public function estMagasinier(): bool
+    {
+        return $this->role === 'magasinier';
+    }
+
 }
