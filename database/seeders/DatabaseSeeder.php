@@ -15,6 +15,14 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             AdminSeeder::class,
+            CategorieSeeder::class,
+            FournisseurSeeder::class,
+            ProduitSeeder::class,
+            ClientSeeder::class,
         ]);
+        
+        $this->command->info('');
+        $this->command->info('🎉 Base de données remplie avec succès !');
+        $this->command->info('');
     }
 }
