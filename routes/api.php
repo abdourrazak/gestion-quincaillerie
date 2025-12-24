@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\CategoryController;
+use App\Http\Controllers\API\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -39,48 +41,37 @@ Route::prefix('auth')->group(function () {
 // Routes protégées par authentification Sanctum
 Route::middleware('auth:sanctum')->group(function () {
     
-    // Routes pour les catégories
+    // ============================================
+    // CATÉGORIES
+    // ============================================
     Route::prefix('categories')->group(function () {
-        Route::get('/', function () {
-            return response()->json(['message' => 'Liste des catégories']);
-        });
-        Route::post('/', function () {
-            return response()->json(['message' => 'Créer une catégorie']);
-        });
-        Route::get('/{id}', function ($id) {
-            return response()->json(['message' => "Détails de la catégorie {$id}"]);
-        });
-        Route::put('/{id}', function ($id) {
-            return response()->json(['message' => "Modifier la catégorie {$id}"]);
-        });
-        Route::delete('/{id}', function ($id) {
-            return response()->json(['message' => "Supprimer la catégorie {$id}"]);
-        });
+        Route::get('/', [CategoryController::class, 'index']);
+        Route::post('/', [CategoryController::class, 'store']);
+        Route::get('/{id}', [CategoryController::class, 'show']);
+        Route::put('/{id}', [CategoryController::class, 'update']);
+        Route::delete('/{id}', [CategoryController::class, 'destroy']);
+        Route::post('/{id}/toggle', [CategoryController::class, 'toggle']);
     });
 
-    // Routes pour les produits
+    // ============================================
+    // PRODUITS
+    // ============================================
     Route::prefix('produits')->group(function () {
-        Route::get('/', function () {
-            return response()->json(['message' => 'Liste des produits']);
-        });
-        Route::post('/', function () {
-            return response()->json(['message' => 'Créer un produit']);
-        });
-        Route::get('/{id}', function ($id) {
-            return response()->json(['message' => "Détails du produit {$id}"]);
-        });
-        Route::put('/{id}', function ($id) {
-            return response()->json(['message' => "Modifier le produit {$id}"]);
-        });
-        Route::delete('/{id}', function ($id) {
-            return response()->json(['message' => "Supprimer le produit {$id}"]);
-        });
-        Route::get('/code-barre/{code}', function ($code) {
-            return response()->json(['message' => "Recherche par code-barre: {$code}"]);
-        });
+        Route::get('/', [ProductController::class, 'index']);
+        Route::post('/', [ProductController::class, 'store']);
+        Route::get('/code-barre/{codeBarre}', [ProductController::class, 'findByBarcode']);
+        Route::get('/{id}', [ProductController::class, 'show']);
+        Route::put('/{id}', [ProductController::class, 'update']);
+        Route::delete('/{id}', [ProductController::class, 'destroy']);
+        Route::post('/{id}/toggle', [ProductController::class, 'toggle']);
+        Route::post('/{id}/stock', [ProductController::class, 'updateStock']);
+        Route::post('/{id}/promotion', [ProductController::class, 'setPromotion']);
+        Route::delete('/{id}/promotion', [ProductController::class, 'removePromotion']);
     });
 
-    // Routes pour les fournisseurs
+    // ============================================
+    // FOURNISSEURS
+    // ============================================
     Route::prefix('fournisseurs')->group(function () {
         Route::get('/', function () {
             return response()->json(['message' => 'Liste des fournisseurs']);
@@ -89,17 +80,19 @@ Route::middleware('auth:sanctum')->group(function () {
             return response()->json(['message' => 'Créer un fournisseur']);
         });
         Route::get('/{id}', function ($id) {
-            return response()->json(['message' => "Détails du fournisseur {$id}"]);
+            return response()->json(['message' => 'Détails du fournisseur ' . $id]);
         });
         Route::put('/{id}', function ($id) {
-            return response()->json(['message' => "Modifier le fournisseur {$id}"]);
+            return response()->json(['message' => 'Mettre à jour le fournisseur ' . $id]);
         });
         Route::delete('/{id}', function ($id) {
-            return response()->json(['message' => "Supprimer le fournisseur {$id}"]);
+            return response()->json(['message' => 'Supprimer le fournisseur ' . $id]);
         });
     });
 
-    // Routes pour les clients
+    // ============================================
+    // CLIENTS
+    // ============================================
     Route::prefix('clients')->group(function () {
         Route::get('/', function () {
             return response()->json(['message' => 'Liste des clients']);
@@ -108,17 +101,19 @@ Route::middleware('auth:sanctum')->group(function () {
             return response()->json(['message' => 'Créer un client']);
         });
         Route::get('/{id}', function ($id) {
-            return response()->json(['message' => "Détails du client {$id}"]);
+            return response()->json(['message' => 'Détails du client ' . $id]);
         });
         Route::put('/{id}', function ($id) {
-            return response()->json(['message' => "Modifier le client {$id}"]);
+            return response()->json(['message' => 'Mettre à jour le client ' . $id]);
         });
         Route::delete('/{id}', function ($id) {
-            return response()->json(['message' => "Supprimer le client {$id}"]);
+            return response()->json(['message' => 'Supprimer le client ' . $id]);
         });
     });
 
-    // Routes pour les ventes
+    // ============================================
+    // VENTES
+    // ============================================
     Route::prefix('ventes')->group(function () {
         Route::get('/', function () {
             return response()->json(['message' => 'Liste des ventes']);
@@ -127,36 +122,40 @@ Route::middleware('auth:sanctum')->group(function () {
             return response()->json(['message' => 'Créer une vente']);
         });
         Route::get('/{id}', function ($id) {
-            return response()->json(['message' => "Détails de la vente {$id}"]);
+            return response()->json(['message' => 'Détails de la vente ' . $id]);
+        });
+        Route::put('/{id}', function ($id) {
+            return response()->json(['message' => 'Mettre à jour la vente ' . $id]);
         });
         Route::delete('/{id}', function ($id) {
-            return response()->json(['message' => "Annuler la vente {$id}"]);
+            return response()->json(['message' => 'Supprimer la vente ' . $id]);
         });
         Route::get('/{id}/facture', function ($id) {
-            return response()->json(['message' => "Générer la facture {$id}"]);
+            return response()->json(['message' => 'Générer la facture ' . $id]);
         });
     });
 
-    // Routes pour le stock
+    // ============================================
+    // STOCK
+    // ============================================
     Route::prefix('stock')->group(function () {
+        Route::get('/alertes', function () {
+            return response()->json(['message' => 'Alertes de stock']);
+        });
         Route::get('/mouvements', function () {
             return response()->json(['message' => 'Liste des mouvements de stock']);
         });
-        Route::post('/entree', function () {
-            return response()->json(['message' => 'Entrée de stock']);
+        Route::post('/mouvement', function () {
+            return response()->json(['message' => 'Créer un mouvement de stock']);
         });
-        Route::post('/sortie', function () {
-            return response()->json(['message' => 'Sortie de stock']);
-        });
-        Route::post('/ajustement', function () {
-            return response()->json(['message' => 'Ajustement de stock']);
-        });
-        Route::get('/alertes', function () {
-            return response()->json(['message' => 'Alertes de stock faible']);
+        Route::get('/inventaire', function () {
+            return response()->json(['message' => 'Inventaire complet']);
         });
     });
 
-    // Routes pour les commandes fournisseurs
+    // ============================================
+    // COMMANDES FOURNISSEURS
+    // ============================================
     Route::prefix('commandes-fournisseurs')->group(function () {
         Route::get('/', function () {
             return response()->json(['message' => 'Liste des commandes fournisseurs']);
@@ -165,23 +164,25 @@ Route::middleware('auth:sanctum')->group(function () {
             return response()->json(['message' => 'Créer une commande fournisseur']);
         });
         Route::get('/{id}', function ($id) {
-            return response()->json(['message' => "Détails de la commande {$id}"]);
+            return response()->json(['message' => 'Détails de la commande ' . $id]);
         });
         Route::put('/{id}', function ($id) {
-            return response()->json(['message' => "Modifier la commande {$id}"]);
+            return response()->json(['message' => 'Mettre à jour la commande ' . $id]);
         });
         Route::delete('/{id}', function ($id) {
-            return response()->json(['message' => "Supprimer la commande {$id}"]);
+            return response()->json(['message' => 'Supprimer la commande ' . $id]);
         });
         Route::post('/{id}/recevoir', function ($id) {
-            return response()->json(['message' => "Recevoir la commande {$id}"]);
+            return response()->json(['message' => 'Recevoir la commande ' . $id]);
         });
     });
 
-    // Routes pour le tableau de bord
+    // ============================================
+    // DASHBOARD
+    // ============================================
     Route::prefix('dashboard')->group(function () {
         Route::get('/stats', function () {
-            return response()->json(['message' => 'Statistiques du tableau de bord']);
+            return response()->json(['message' => 'Statistiques du dashboard']);
         });
         Route::get('/ventes-jour', function () {
             return response()->json(['message' => 'Ventes du jour']);
@@ -189,34 +190,47 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/ventes-mois', function () {
             return response()->json(['message' => 'Ventes du mois']);
         });
-        Route::get('/produits-populaires', function () {
-            return response()->json(['message' => 'Produits les plus vendus']);
+        Route::get('/top-produits', function () {
+            return response()->json(['message' => 'Top produits']);
         });
     });
 
-    // Routes pour les rapports
+    // ============================================
+    // RAPPORTS
+    // ============================================
     Route::prefix('rapports')->group(function () {
         Route::get('/ventes', function () {
             return response()->json(['message' => 'Rapport des ventes']);
         });
         Route::get('/stock', function () {
-            return response()->json(['message' => 'Rapport de stock']);
+            return response()->json(['message' => 'Rapport du stock']);
         });
         Route::get('/benefices', function () {
             return response()->json(['message' => 'Rapport des bénéfices']);
         });
+        Route::get('/clients', function () {
+            return response()->json(['message' => 'Rapport des clients']);
+        });
     });
 
-    // Routes pour les utilisateurs (admin uniquement)
+    // ============================================
+    // UTILISATEURS (Admin uniquement)
+    // ============================================
     Route::prefix('users')->group(function () {
         Route::get('/', function () {
             return response()->json(['message' => 'Liste des utilisateurs']);
         });
+        Route::post('/', function () {
+            return response()->json(['message' => 'Créer un utilisateur']);
+        });
+        Route::get('/{id}', function ($id) {
+            return response()->json(['message' => 'Détails de l\'utilisateur ' . $id]);
+        });
         Route::put('/{id}', function ($id) {
-            return response()->json(['message' => "Modifier l'utilisateur {$id}"]);
+            return response()->json(['message' => 'Mettre à jour l\'utilisateur ' . $id]);
         });
         Route::delete('/{id}', function ($id) {
-            return response()->json(['message' => "Supprimer l'utilisateur {$id}"]);
+            return response()->json(['message' => 'Supprimer l\'utilisateur ' . $id]);
         });
     });
 });
