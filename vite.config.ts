@@ -4,6 +4,10 @@ import react from '@vitejs/plugin-react';
 import laravel from 'laravel-vite-plugin';
 import { defineConfig } from 'vite';
 
+// Désactiver Wayfinder en production/CI (Vercel)
+const isProduction = process.env.NODE_ENV === 'production';
+const isCI = process.env.CI === 'true' || process.env.VERCEL === '1';
+
 export default defineConfig({
     plugins: [
         laravel({
@@ -17,9 +21,12 @@ export default defineConfig({
             },
         }),
         tailwindcss(),
-        wayfinder({
-            formVariants: true,
-        }),
+        // Désactiver Wayfinder sur Vercel (pas de PHP disponible)
+        ...(isCI ? [] : [
+            wayfinder({
+                formVariants: true,
+            }),
+        ]),
     ],
     esbuild: {
         jsx: 'automatic',
