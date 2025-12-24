@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\CategoryController;
+use App\Http\Controllers\API\ClientController;
 use App\Http\Controllers\API\ProductController;
+use App\Http\Controllers\API\SupplierController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -73,42 +75,26 @@ Route::middleware('auth:sanctum')->group(function () {
     // FOURNISSEURS
     // ============================================
     Route::prefix('fournisseurs')->group(function () {
-        Route::get('/', function () {
-            return response()->json(['message' => 'Liste des fournisseurs']);
-        });
-        Route::post('/', function () {
-            return response()->json(['message' => 'Créer un fournisseur']);
-        });
-        Route::get('/{id}', function ($id) {
-            return response()->json(['message' => 'Détails du fournisseur ' . $id]);
-        });
-        Route::put('/{id}', function ($id) {
-            return response()->json(['message' => 'Mettre à jour le fournisseur ' . $id]);
-        });
-        Route::delete('/{id}', function ($id) {
-            return response()->json(['message' => 'Supprimer le fournisseur ' . $id]);
-        });
+        Route::get('/', [SupplierController::class, 'index']);
+        Route::post('/', [SupplierController::class, 'store']);
+        Route::get('/{id}', [SupplierController::class, 'show']);
+        Route::put('/{id}', [SupplierController::class, 'update']);
+        Route::delete('/{id}', [SupplierController::class, 'destroy']);
+        Route::post('/{id}/toggle', [SupplierController::class, 'toggle']);
+        Route::get('/{id}/produits', [SupplierController::class, 'products']);
     });
 
     // ============================================
     // CLIENTS
     // ============================================
     Route::prefix('clients')->group(function () {
-        Route::get('/', function () {
-            return response()->json(['message' => 'Liste des clients']);
-        });
-        Route::post('/', function () {
-            return response()->json(['message' => 'Créer un client']);
-        });
-        Route::get('/{id}', function ($id) {
-            return response()->json(['message' => 'Détails du client ' . $id]);
-        });
-        Route::put('/{id}', function ($id) {
-            return response()->json(['message' => 'Mettre à jour le client ' . $id]);
-        });
-        Route::delete('/{id}', function ($id) {
-            return response()->json(['message' => 'Supprimer le client ' . $id]);
-        });
+        Route::get('/', [ClientController::class, 'index']);
+        Route::post('/', [ClientController::class, 'store']);
+        Route::get('/{id}', [ClientController::class, 'show']);
+        Route::put('/{id}', [ClientController::class, 'update']);
+        Route::delete('/{id}', [ClientController::class, 'destroy']);
+        Route::post('/{id}/toggle', [ClientController::class, 'toggle']);
+        Route::get('/{id}/achats', [ClientController::class, 'purchases']);
     });
 
     // ============================================
